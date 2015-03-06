@@ -1,0 +1,31 @@
+Name:                 archiver
+Version:              0.1
+Build-type:           Simple
+Synopsis:             Archives/restores Capital Match data images
+Description:
+ 
+    CLI to archive and restore some directory for capital match application
+    
+License:              AllRightsReserved
+License-file:         LICENSE
+Author:               Capital Match
+Maintainer:           Arnaud Bailly <arnaud@capital-match.com>
+-- for sandboxing?
+Cabal-version:        >= 1.20
+
+
+Executable archiver
+  Default-Language:  Haskell2010
+  main-is:           archiver.hs
+  hs-source-dirs:    main
+  ghc-options:       -Wall -Werror -fno-warn-orphans -threaded
+  build-depends:     base
+                   , aws
+                   , mtl
+                   , blaze-builder
+                   , conduit
+                   , unix
+                   , bytestring
+                   , conduit-extra
+                   , http-conduit
+
