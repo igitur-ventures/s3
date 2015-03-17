@@ -1,22 +1,22 @@
-Name:                 archiver
+Name:                 s3
 Version:              0.1
 Build-type:           Simple
-Synopsis:             Archives/restores Capital Match data images
+Synopsis:             Archives/restores data to/from s3
 Description:
  
-    CLI to archive and restore some directory for capital match application
+    CLI to archive and restore files to/from s3
     
-License:              AllRightsReserved
+License:              BSD-2 Clause
 License-file:         LICENSE
-Author:               Capital Match
-Maintainer:           Arnaud Bailly <arnaud@capital-match.com>
+Author:               Arnaud Bailly <arnaud@igitur.io>
+Maintainer:           Arnaud Bailly <arnaud@igitur.io>
 -- for sandboxing?
 Cabal-version:        >= 1.20
 
 
 Executable archiver
   Default-Language:  Haskell2010
-  main-is:           archiver.hs
+  main-is:           s3.hs
   hs-source-dirs:    main
   ghc-options:       -Wall -fno-warn-orphans -threaded -Werror
   build-depends:     base
