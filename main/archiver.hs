@@ -11,11 +11,13 @@ import qualified Aws.S3                as S3
 import           Control.Applicative   ((<$>))
 import           Control.Monad         (forM_)
 import           Control.Monad.Trans   (liftIO)
-import           Data.Conduit.Binary   (sourceFile)
+import           Data.Conduit          (($$+-))
+import           Data.Conduit.Binary   (sinkFile, sourceFile)
 import           Data.Default
 import           Data.Monoid           ((<>))
 import           Data.Text             (pack)
-import           Network.HTTP.Conduit  (requestBodySource, withManager)
+import           Network.HTTP.Conduit  (requestBodySource, responseBody,
+                                        withManager)
 
 type BucketName = String
 type Files = [String]
@@ -76,17 +78,25 @@ main = do
 
 runOp :: Aws.Configuration -> S3.S3Configuration Aws.NormalQuery -> AWSOp -> IO ()
 runOp cfg s3cfg Put{..}  = forM_ files (putFile cfg s3cfg bucket)
-runOp _   _     Get{..}  = undefined
+runOp cfg s3cfg Get{..}  = forM_ files (getFile cfg s3cfg bucket)
 runOp _   _     NoOp{..} = return ()
 
 putFile :: Aws.Configuration -> S3.S3Configuration Aws.NormalQuery -> FilePath -> String -> IO ()
 putFile cfg s3cfg bucket file = do
   sz <- fileSize <$> getFileStatus file
-  {- Set up a ResourceT region with an available HTTP manager. -}
   withManager $ \mgr -> do
-    {- Create a request object with S3.getObject and run the request with pureAws. -}
     S3.PutObjectResponse { S3.porVersionId = vers } <-
       Aws.pureAws cfg s3cfg mgr $
       -- need to read file fully and know its size: https://forums.aws.amazon.com/message.jspa?messageID=554788
       S3.putObject (pack bucket) (pack file) (requestBodySource (fromIntegral sz) $ sourceFile file)
     liftIO $ putStrLn $ "put file " <> file <> ":  " <> show vers
+
+getFile :: Aws.Configuration -> S3.S3Configuration Aws.NormalQuery -> FilePath -> String -> IO ()
+getFile cfg s3cfg bucket file = do
+  withManager $ \mgr -> do
+    S3.GetObjectResponse { S3.gorResponse = rsp , S3.gorMetadata = md } <-
+      Aws.pureAws cfg s3cfg mgr $
+        S3.getObject (pack bucket) (pack file)
+
+    responseBody rsp $$+- sinkFile file
+    liftIO $ putStrLn $ "get file " <> file <> ", last modified: " <> show (S3.omLastModified md)
