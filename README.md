@@ -7,14 +7,20 @@ This application relies heavily on [Aristid Breitkreuz'](https://github.com/aris
 
 Put your AWS credentials in a file `~/.aws-keys`:
 
-> cat ~/.aws-keys
-> default <some AWS Access key> <some private AWS key>
+```
+cat ~/.aws-keys
+default <some AWS Access key> <some private AWS key>
+```
+
 
 To upload files to a bucket, run
 
-> ./s3 -p mybucket file1 file2 file3
+```
+./s3 -p mybucket file1 file2 file3
+```
 
 To download files from a bucket, run
 
-> ./s3 -g mybucket file1 file2
-
+```
+./s3 -g mybucket file1 file2
+```
