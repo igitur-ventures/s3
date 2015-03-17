@@ -18,13 +18,15 @@ Executable archiver
   Default-Language:  Haskell2010
   main-is:           archiver.hs
   hs-source-dirs:    main
-  ghc-options:       -Wall -Werror -fno-warn-orphans -threaded
+  ghc-options:       -Wall -fno-warn-orphans -threaded -Werror
   build-depends:     base
                    , aws
                    , mtl
                    , blaze-builder
+                   , data-default
                    , conduit
                    , unix
+                   , text
                    , bytestring
                    , conduit-extra
                    , http-conduit
